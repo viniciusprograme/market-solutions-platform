@@ -1,0 +1,173 @@
+    CREATE DATABASE RESPOSTAS_FORMULARIO;
+    CREATE USER vinicius WITH PASSWORD 'senha_segura';
+    GRANT ALL PROVILEGES ON DATABASE RESPOSTAS_FORMULARIO TO vinicius;
+
+    CREATE TABLE respostas (
+        id SERIAL PRIMARY KEY,
+        resposta1 TEXT,
+        resposta2 TEXT,
+        resposta3 TEXT,
+        resposta4 TEXT,
+        resposta5 TEXT,
+        resposta6 TEXT,     
+        resposta7 TEXT,
+        resposta8 TEXT,
+        resposta9 TEXT,
+        resposta10 TEXT,
+        resposta11 TEXT,
+        resposta12 TEXT,
+        resposta13 TEXT,
+        resposta14 TEXT,
+        resposta15 TEXT,
+        resposta16 TEXT,
+        resposta17 TEXT,
+        resposta18 TEXT,
+        resposta19 TEXT,
+        resposta20 TEXT
+    );
+
+    CREATE TABLE usuarios (
+        id SERIAL PRIMARY KEY,
+        nome TEXT,
+        email TEXT
+    );
+
+    CREATE TABLE respostas_usuarios (
+        id SERIAL PRIMARY KEY,
+        resposta_id INTEGER REFERENCES respostas(id),
+        usuario_id INTEGER REFERENCES usuarios(id)
+    );
+
+    CREATE TABLE feedback (
+        id SERIAL PRIMARY KEY,
+        resposta_usuario_id INTEGER REFERENCES respostas_usuarios(id),
+        comentario TEXT
+    );
+
+    CREATE TABLE analises (
+        id SERIAL PRIMARY KEY,
+        resposta_usuario_id INTEGER REFERENCES respostas_usuarios(id),
+        resultado TEXT
+    );
+
+    CREATE VIEW respostas_com_usuarios AS
+    SELECT r.*, u.nome, u.email
+    FROM respostas r
+    JOIN respostas_usuarios ru ON r.id = ru.resposta_id
+    JOIN usuarios u ON ru.usuario_id = u.id;
+
+    CREATE OR REPLACE FUNCTION inserir_resposta_usuario()
+    RETURNS TRIGGER AS $$
+    BEGIN
+        INSERT INTO respostas_usuarios (resposta_id, usuario_id)
+        VALUES (NEW.id, NEW.usuario_id);
+        RETURN NEW;
+    END;
+
+    CREATE TRIGGER trigger_inserir_resposta_usuario
+    AFTER INSERT ON respostas
+    FOR EACH ROW
+    EXECUTE FUNCTION inserir_resposta_usuario();
+
+    CREATE OR REPLACE FUNCTION calcular_analise()
+    RETURNS TRIGGER AS $$
+    BEGIN
+        -- Lógica para calcular análise com base nas respostas
+        UPDATE analises
+        SET resultado = 'Análise calculada'
+        WHERE resposta_usuario_id = NEW.id;
+        RETURN NEW;
+    END;
+
+
+    CREATE TRIGGER trigger_calcular_analise
+    AFTER INSERT ON respostas_usuarios  
+    FOR EACH ROW
+    EXECUTE FUNCTION calcular_analise();
+
+    CREATE OR REPLACE FUNCTION inserir_feedback()
+    RETURNS TRIGGER AS $$               
+    BEGIN
+        INSERT INTO feedback (resposta_usuario_id, comentario)
+        VALUES (NEW.id, 'Feedback recebido');
+        RETURN NEW;
+    END;
+
+    CREATE TRIGGER trigger_inserir_feedback
+    AFTER INSERT ON respostas_usuarios  
+    FOR EACH ROW
+    EXECUTE FUNCTION inserir_feedback();
+
+    if EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'vinicius') THEN
+        RAISE NOTICE 'Usuário vinicius já existe.';
+    ELSE
+        CREATE USER vinicius WITH PASSWORD 'senha_segura';
+        GRANT ALL PROVILEGES ON DATABASE RESPOSTAS_FORMULARIO TO vinicius;
+        RAISE NOTICE 'Usuário vinicius criado e privilégios concedidos.';
+    END IF;
+
+    EXECUTE 'CREATE DATABASE RESPOSTAS_FORMULARIO';
+    RAISE NOTICE 'Banco de dados RESPOSTAS_FORMULARIO criado com sucesso.';
+
+    EXECUTE 'CREATE TABLE respostas (
+        id SERIAL PRIMARY KEY,
+        resposta1 TEXT,
+        resposta2 TEXT,
+        resposta3 TEXT,
+        resposta4 TEXT,
+        resposta5 TEXT,
+        resposta6 TEXT,     
+        resposta7 TEXT,
+        resposta8 TEXT,
+        resposta9 TEXT,
+        resposta10 TEXT,
+        resposta11 TEXT,
+        resposta12 TEXT,
+        resposta13 TEXT,
+        resposta14 TEXT,
+        resposta15 TEXT,
+        resposta16 TEXT,
+        resposta17 TEXT,
+        resposta18 TEXT,
+        resposta19 TEXT,
+        resposta20 TEXT
+    )'; 
+    RAISE NOTICE 'Tabela respostas criada com sucesso.';
+
+    EXECUTE 'CREATE TABLE usuarios (
+        id SERIAL PRIMARY KEY,
+        nome TEXT,
+        email TEXT
+    )';
+    RAISE NOTICE 'Tabela usuarios criada com sucesso.';
+
+    EXECUTE 'CREATE TABLE respostas_usuarios (
+        id SERIAL PRIMARY KEY,
+        resposta_id INTEGER REFERENCES respostas(id),
+        usuario_id INTEGER REFERENCES usuarios(id)
+    )'; 
+    RAISE NOTICE 'Tabela respostas_usuarios criada com sucesso.';
+
+    EXECUTE 'CREATE TABLE feedback (
+        id SERIAL PRIMARY KEY,
+        resposta_usuario_id INTEGER REFERENCES respostas_usuarios(id),
+        comentario TEXT
+    )';
+    RAISE NOTICE 'Tabela feedback criada com sucesso.';
+
+    EXECUTE 'CREATE TABLE analises (
+        id SERIAL PRIMARY KEY,
+        resposta_usuario_id INTEGER REFERENCES respostas_usuarios(id),
+        resultado TEXT
+    )';
+    RAISE NOTICE 'Tabela analises criada com sucesso.';
+
+    EXECUTE 'CREATE VIEW respostas_com_usuarios AS
+    SELECT r.*, u.nome, u.email
+    FROM respostas r
+    JOIN respostas_usuarios ru ON r.id = ru.resposta_id
+    JOIN usuarios u ON ru.usuario_id = u.id';
+
+    RAISE NOTICE 'Visão respostas_com_usuarios criada com sucesso.';
+
+    
