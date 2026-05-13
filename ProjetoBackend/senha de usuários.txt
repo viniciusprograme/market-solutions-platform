@@ -1,0 +1,15 @@
+Usuário 1:
+Usuário: Saymon
+email: saymon@gmail.com
+senha: 8Q{sH71q*:^3
+
+Usuário 2:
+Usuário: Angelo
+email: angelo@gmail.com
+senha: Pneu@123
+senha antiga: Ab12345@
+
+Super-usuário:
+Usuário: Lucas
+email: lucas@gmail.com
+senha: 1234$$$$
