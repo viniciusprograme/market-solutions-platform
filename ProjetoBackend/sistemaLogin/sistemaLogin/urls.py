@@ -21,6 +21,7 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('admin/', admin.site.urls), # Acesso ao painel administrativos
     path('', include('formulario.urls')), # Rotas da app de login/registro
+    path('', include('agenda.urls')), # Rotas da app de login/registro
 
     # Ciclo de recuperação de senha
     path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
