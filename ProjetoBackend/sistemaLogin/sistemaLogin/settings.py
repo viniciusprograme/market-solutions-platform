@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'formulario',
-    'agenda'
+    'agenda',
+    'frequencia'
 ]
 
 MIDDLEWARE = [
@@ -106,7 +107,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Idioma e localização
 LANGUAGE_CODE = 'pt-br'
-TIME_ZONE = 'UTC-3'
+TIME_ZONE = 'America/Fortaleza'
 
 USE_I18N = True
 
